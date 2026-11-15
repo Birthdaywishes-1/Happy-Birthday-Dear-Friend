@@ -1607,63 +1607,130 @@ document.addEventListener("visibilitychange", function () {
         "<br><small style=\"opacity:.65\">Hamesha tere saath</small>";
 
 
-        /* GIFTS */
+/* ==========================================
+   GIFTS — AUTO OPEN ONE BY ONE
+   ========================================== */
 
-        $("#gifts").innerHTML = GIFTS.map(function(g, i) {
+$("#gifts").innerHTML = GIFTS.map(function(g, i) {
 
-            var img = CONFIG.giftPhotos[i];
+    var img = CONFIG.giftPhotos[i];
 
-            return '<div class="gift" style="--g1:'+g[0]+
-            ';--g2:'+g[1]+'">'+
+    return '<div class="gift" style="--g1:'+g[0]+
+    ';--g2:'+g[1]+'">'+
 
-            '<div class="glow"></div>'+
+    '<div class="glow"></div>'+
 
-            '<div class="pol">'+
+    '<div class="pol">'+
 
-            '<div class="ig">'+
-            (img?
-                '<img src="'+img+'" alt="gift">':
-                g[2])+
-            '</div>'+
+    '<div class="ig">'+
+    (img ?
+        '<img src="'+img+'" alt="gift">' :
+        g[2])+
+    '</div>'+
 
-            '<p>'+g[3]+'</p>'+
+    '<p>'+g[3]+'</p>'+
 
-            '</div>'+
+    '</div>'+
 
-            '<div class="gbox">'+
-            '<div class="lid"></div>'+
-            '</div>'+
+    '<div class="gbox">'+
+    '<div class="lid"></div>'+
+    '</div>'+
 
-            '</div>'
+    '</div>';
 
-        }).join("");
+}).join("");
 
 
-        document.querySelectorAll(".gift").forEach(function(g) {
+/* ==========================================
+   AUTO OPEN GIFTS ONE BY ONE ON SCROLL
+   ========================================== */
 
-            g.onclick = function(e) {
+var giftObserver = new IntersectionObserver(function(entries) {
 
-                if (g.classList.contains("open")) {
+    entries.forEach(function(entry) {
 
-                    return
+        if (entry.isIntersecting) {
 
-                }
+            /* Sirf ek baar sequence start hoga */
 
-                g.classList.add("open");
+            giftObserver.unobserve(entry.target);
 
-                var r = g.getBoundingClientRect();
+            var gifts = document.querySelectorAll(".gift");
 
-                burst(
-                    r.left+r.width/2,
-                    r.top+70,
-                    70,
-                    9
-                )
+            /* Pehla gift */
 
-            }
+            setTimeout(function() {
 
-        });
+                openGift(gifts[0]);
 
+            }, 400);
+
+
+            /* Doosra gift */
+
+            setTimeout(function() {
+
+                openGift(gifts[1]);
+
+            }, 1800);
+
+
+            /* Teesra gift */
+
+            setTimeout(function() {
+
+                openGift(gifts[2]);
+
+            }, 3200);
+
+        }
+
+    });
+
+}, {
+
+    threshold: 0.35
+
+});
+
+
+/* ==========================================
+   GIFT OPEN FUNCTION
+   ========================================== */
+
+function openGift(gift) {
+
+    if (!gift || gift.classList.contains("open")) {
+        return;
+    }
+
+    gift.classList.add("open");
+
+    var r = gift.getBoundingClientRect();
+
+    /* Sparkle / confetti */
+
+    burst(
+        r.left + r.width / 2,
+        r.top + 70,
+        70,
+        9
+    );
+
+}
+
+
+/* ==========================================
+   START OBSERVING GIFT SECTION
+   ========================================== */
+
+var giftSection = $("#gifts");
+
+if (giftSection) {
+
+    giftObserver.observe(giftSection);
+
+}
 
         /* MESSAGE ANIMATION */
 
