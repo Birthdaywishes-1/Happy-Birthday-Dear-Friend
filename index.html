@@ -1273,33 +1273,58 @@
         }
 
 
-        /* MUSIC */
+/* MUSIC */
 
-        $("#mus").onclick = function() {
+function playMusic() {
+    if (audio.src && audio.paused) {
+        audio.play().catch(function () {});
+    }
+}
 
-            if (!audio.src) {
+function pauseMusic() {
+    if (audio.src && !audio.paused) {
+        audio.pause();
+    }
+}
 
-                toast("🎵 CONFIG.song me song ka naam add karo");
+/* Music button */
+$("#mus").onclick = function() {
 
-                return
+    if (!audio.src) {
+        toast("🎵 CONFIG.song me song ka naam add karo");
+        return;
+    }
 
-            }
+    if (audio.paused) {
+        audio.play().catch(function () {});
+        this.classList.remove("paused");
+    } else {
+        audio.pause();
+        this.classList.add("paused");
+    }
+};
 
-            if (audio.paused) {
+/*
+   Browser/app background me jaate hi
+   song pause hoga.
+*/
+document.addEventListener("visibilitychange", function () {
 
-                audio.play();
+    if (document.hidden) {
 
-                this.classList.remove("paused")
+        pauseMusic();
 
-            } else {
+    } else {
 
-                audio.pause();
+        /*
+          Browser me wapas aane par
+          song automatically resume hoga.
+        */
+        playMusic();
 
-                this.classList.add("paused")
+    }
 
-            }
-
-        };
+});
 
 
         /* canvas: confetti + sparkle trail */
